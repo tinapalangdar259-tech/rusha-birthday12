@@ -2,89 +2,91 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Rusha Birthday 💖</title>
+<title>Rusha Birthday</title>
 
 <style>
-body { margin:0; overflow:hidden; background:black; font-family:sans-serif; }
-canvas { position:absolute; top:0; left:0; }
-
-/* center */
-#center {
- position:absolute; top:50%; left:50%;
- transform:translate(-50%,-50%);
- text-align:center;
+body {
+  margin:0;
+  overflow:hidden;
+  background:black;
+  font-family:sans-serif;
 }
 
+canvas {
+  position:absolute;
+  top:0;
+  left:0;
+}
+
+/* CENTER */
+#center {
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  text-align:center;
+}
+
+/* ENVELOPE */
 #envelope {
- width:150px; height:90px;
- background:linear-gradient(45deg,hotpink,gold);
- border-radius:10px;
- cursor:pointer;
- animation:glow 1.5s infinite alternate;
+  width:150px;
+  height:90px;
+  background:linear-gradient(45deg,hotpink,gold);
+  border-radius:12px;
+  cursor:pointer;
+  animation:glow 1.5s infinite alternate;
 }
 
 @keyframes glow {
- from {box-shadow:0 0 10px hotpink;}
- to {box-shadow:0 0 40px gold;}
+  from { box-shadow:0 0 10px hotpink; }
+  to { box-shadow:0 0 40px gold; }
 }
 
-.hidden {display:none;}
+.hidden { display:none; }
 
 #message {
- color:gold;
- font-size:26px;
- margin-top:20px;
+  color:gold;
+  font-size:26px;
+  margin-top:20px;
 }
 
 button {
- padding:12px 25px;
- border:none;
- border-radius:25px;
- background:gold;
- font-weight:bold;
- cursor:pointer;
+  padding:12px 24px;
+  border:none;
+  border-radius:25px;
+  background:gold;
+  cursor:pointer;
 }
 
+/* COUNTDOWN */
 #countdown {
- position:absolute;
- top:50%; left:50%;
- transform:translate(-50%,-50%);
- font-size:120px;
- color:hotpink;
- animation:pulse 1s infinite;
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  font-size:120px;
+  color:hotpink;
 }
 
-@keyframes pulse {
- 0% {transform:translate(-50%,-50%) scale(1);}
- 50% {transform:translate(-50%,-50%) scale(1.2);}
- 100% {transform:translate(-50%,-50%) scale(1);}
+/* DRACULARA IMAGE */
+#drac {
+  position:absolute;
+  bottom:-300px;
+  left:50%;
+  transform:translateX(-50%);
+  width:220px;
+  transition:2s ease;
 }
 
-#cake {
- position:absolute;
- bottom:-300px;
- left:50%;
- transform:translateX(-50%);
- width:200px;
- transition:2s;
-}
-
-#kuromi {
- position:absolute;
- top:20%;
- left:-300px;
- width:120px;
- transition:3s linear;
-}
-
+/* FINAL TEXT */
 #finalText {
- position:absolute;
- top:40%;
- left:50%;
- transform:translate(-50%,-50%);
- font-size:50px;
- color:gold;
- text-shadow:0 0 30px hotpink;
+  position:absolute;
+  top:40%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  font-size:50px;
+  color:gold;
+  text-shadow:0 0 30px hotpink;
 }
 
 </style>
@@ -104,179 +106,141 @@ button {
 <div id="countdown" class="hidden"></div>
 <div id="finalText" class="hidden"></div>
 
-<img id="cake" src="drac.png">
-<img id="kuromi" src="kuromi.png">
+<img id="drac" src="draculara.png">
 
-<audio id="music" src="song.mp3"></audio>
+<audio id="music" src="drip_babymonster.mp3" preload="auto"></audio>
 
 <script>
 
-/* 🌸 BACKGROUND GEOMETRY */
-const bg = document.getElementById("bg");
-const bctx = bg.getContext("2d");
-bg.width=innerWidth; bg.height=innerHeight;
-
-let pts=[];
-for(let i=0;i<100;i++){
- pts.push({x:Math.random()*bg.width,y:Math.random()*bg.height});
-}
-
-function drawBG(){
- bctx.fillStyle="black";
- bctx.fillRect(0,0,bg.width,bg.height);
-
- pts.forEach(p=>{
-   p.x += Math.sin(Date.now()/1000+p.y)*0.5;
-   p.y += Math.cos(Date.now()/1000+p.x)*0.5;
-
-   bctx.fillStyle="gold";
-   bctx.fillRect(p.x,p.y,2,2);
- });
-
- requestAnimationFrame(drawBG);
-}
-drawBG();
+/* 🎵 MUSIC (PLAYS ON FIRST CLICK ANYWHERE) */
+const music = document.getElementById("music");
+document.body.addEventListener("click", () => {
+  music.play();
+}, { once: true });
 
 /* ✉️ UI FLOW */
 const envelope = document.getElementById("envelope");
 const msg = document.getElementById("message");
 const btn = document.getElementById("startBtn");
-const music = document.getElementById("music");
+const countdownEl = document.getElementById("countdown");
 
-function typeText(text, el, speed=40){
- let i=0;
- el.innerText="";
- const interval=setInterval(()=>{
-  el.innerText += text[i];
-  i++;
-  if(i>=text.length) clearInterval(interval);
- },speed);
-}
-
-envelope.onclick = ()=>{
- envelope.style.display="none";
- msg.classList.remove("hidden");
- btn.classList.remove("hidden");
- typeText("Hello Rusha... ready for a FANGTASTIC birthday? 🖤✨", msg);
+envelope.onclick = () => {
+  envelope.style.display="none";
+  msg.classList.remove("hidden");
+  btn.classList.remove("hidden");
+  msg.innerText = "Hello Rusha... ready for a FANGTASTIC birthday? 🖤✨";
 };
 
-btn.onclick = ()=>{
- msg.style.display="none";
- btn.style.display="none";
- music.play();
- startCountdown();
+btn.onclick = () => {
+  msg.style.display="none";
+  btn.style.display="none";
+  startCountdown();
 };
 
 /* ⏳ COUNTDOWN */
-const countdownEl=document.getElementById("countdown");
-
 function startCountdown(){
- countdownEl.classList.remove("hidden");
- let c=10;
- countdownEl.innerText=c;
+  countdownEl.classList.remove("hidden");
+  let c = 10;
+  countdownEl.innerText = c;
 
- let i=setInterval(()=>{
-  c--;
-  countdownEl.innerText=c;
+  let i = setInterval(()=>{
+    c--;
+    countdownEl.innerText = c;
 
-  if(c===0){
-    clearInterval(i);
-    countdownEl.style.display="none";
-    showTime();
-  }
- },1000);
+    if(c === 0){
+      clearInterval(i);
+      countdownEl.style.display="none";
+      launchShow();
+    }
+  },1000);
 }
 
-/* 🎆 FIREWORK ENGINE */
-const fw=document.getElementById("fw");
-const ctx=fw.getContext("2d");
-fw.width=innerWidth; fw.height=innerHeight;
+/* 🎆 FIREWORK SYSTEM */
+const fw = document.getElementById("fw");
+const ctx = fw.getContext("2d");
+fw.width = innerWidth;
+fw.height = innerHeight;
 
-let particles=[];
+let particles = [];
 
 function explode(x,y){
- for(let i=0;i<100;i++){
-  particles.push({
-   x,y,
-   dx:(Math.random()-0.5)*6,
-   dy:(Math.random()-0.5)*6,
-   life:100
+  for(let i=0;i<80;i++){
+    particles.push({
+      x,y,
+      dx:(Math.random()-0.5)*6,
+      dy:(Math.random()-0.5)*6,
+      life:80
+    });
+  }
+}
+
+function animate(){
+  ctx.fillStyle="rgba(0,0,0,0.2)";
+  ctx.fillRect(0,0,fw.width,fw.height);
+
+  particles.forEach((p,i)=>{
+    p.x += p.dx;
+    p.y += p.dy;
+    p.life--;
+
+    ctx.fillStyle="gold";
+    ctx.fillRect(p.x,p.y,2,2);
+
+    if(p.life <= 0) particles.splice(i,1);
   });
- }
+
+  requestAnimationFrame(animate);
 }
+animate();
 
-function animateFW(){
- ctx.fillStyle="rgba(0,0,0,0.2)";
- ctx.fillRect(0,0,fw.width,fw.height);
-
- particles.forEach((p,i)=>{
-  p.x+=p.dx;
-  p.y+=p.dy;
-  p.life--;
-
-  ctx.fillStyle="hotpink";
-  ctx.fillRect(p.x,p.y,2,2);
-
-  if(p.life<=0) particles.splice(i,1);
- });
-
- requestAnimationFrame(animateFW);
-}
-animateFW();
-
-/* 🔥 TEXT FIREWORK (REAL LETTERS) */
+/* 🔥 TEXT FIREWORK */
 function fireText(text){
- const temp=document.createElement("canvas");
- const tctx=temp.getContext("2d");
- temp.width=fw.width;
- temp.height=fw.height;
+  const temp=document.createElement("canvas");
+  const tctx=temp.getContext("2d");
 
- tctx.font="bold 100px Arial";
- tctx.fillText(text, fw.width/4, fw.height/2);
+  temp.width=fw.width;
+  temp.height=fw.height;
 
- const data=tctx.getImageData(0,0,temp.width,temp.height).data;
+  tctx.font="bold 100px Arial";
+  tctx.fillText(text, fw.width/4, fw.height/2);
 
- for(let y=0;y<temp.height;y+=6){
-  for(let x=0;x<temp.width;x+=6){
-    const i=(y*temp.width+x)*4;
-    if(data[i+3]>150){
-      explode(x,y);
+  const data=tctx.getImageData(0,0,temp.width,temp.height).data;
+
+  for(let y=0;y<temp.height;y+=6){
+    for(let x=0;x<temp.width;x+=6){
+      const i=(y*temp.width+x)*4;
+      if(data[i+3]>150){
+        explode(x,y);
+      }
     }
   }
- }
 }
 
 /* 🎂 MAIN SHOW */
-function showTime(){
+function launchShow(){
 
- // continuous fireworks
- setInterval(()=>{
-   explode(Math.random()*fw.width, Math.random()*fw.height);
- },500);
+  // continuous fireworks
+  setInterval(()=>{
+    explode(Math.random()*fw.width, Math.random()*fw.height);
+  },400);
 
- // cake builds
- setTimeout(()=>{
-   document.getElementById("cake").style.bottom="50px";
- },1500);
+  // draculara rises
+  setTimeout(()=>{
+    document.getElementById("drac").style.bottom="50px";
+  },1500);
 
- // kuromi entrance
- setTimeout(()=>{
-   document.getElementById("kuromi").style.left="50%";
- },2500);
+  // text sequence
+  setTimeout(()=>fireText("HAPPY"), 2500);
+  setTimeout(()=>fireText("12TH"), 4000);
+  setTimeout(()=>fireText("BIRTHDAY"), 5500);
+  setTimeout(()=>fireText("RUSHA"), 7000);
 
- // TEXT FIREWORK SEQUENCE
- setTimeout(()=> fireText("HAPPY"), 3000);
- setTimeout(()=> fireText("12TH"), 4500);
- setTimeout(()=> fireText("BIRTHDAY"), 6000);
- setTimeout(()=> fireText("RUSHA"), 7500);
-
- // FINAL TEXT
- setTimeout(()=>{
-   const final=document.getElementById("finalText");
-   final.classList.remove("hidden");
-   final.innerText="🎆 HAPPY 12TH BIRTHDAY RUSHA 🎆";
- },9000);
-
+  // final text
+  setTimeout(()=>{
+    const final=document.getElementById("finalText");
+    final.classList.remove("hidden");
+    final.innerText="🎆 HAPPY 12TH BIRTHDAY RUSHA 🎆";
+  },9000);
 }
 
 </script>
